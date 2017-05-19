@@ -5,6 +5,10 @@ public class resources {
         return "/maps/api/place/add/json";
     }
 
+    public static String getXmlPostResourceCreate(){
+        return "/maps/api/place/add/xml";
+    }
+
     public static String getJsonPostResourceDelete(){
         return "/maps/api/place/delete/json";
     }

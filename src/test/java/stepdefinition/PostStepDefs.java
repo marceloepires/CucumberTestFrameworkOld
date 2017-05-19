@@ -12,6 +12,8 @@ import io.restassured.response.Response;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Properties;
 
 import static io.restassured.RestAssured.given;
@@ -28,14 +30,14 @@ public class PostStepDefs {
         prop.load(fileInputStream);
     }
 
-    @Given("^I create the google place$")
-    public void createThePlace() {
+    @Given("^I create the google place in Json$")
+    public void createThePlaceJson() {
 
         RestAssured.baseURI = prop.getProperty("HOST");
 
         Response resp = given().
                 queryParam("key", prop.getProperty("KEY")).
-                body(payLoad.getPostCreateGooglePlaceData()).
+                body(payLoad.getJsonPostCreateGooglePlaceData()).
                 when().
                 post(resources.getJsonPostResourceCreate()).
                 then().assertThat().statusCode(200).and().contentType(ContentType.JSON).and().
@@ -53,8 +55,8 @@ public class PostStepDefs {
 
     }
 
-    @When("^I delete the google place$")
-    public void deleteThePlace(){
+    @When("^I delete the google place in Json$")
+    public void deleteThePlaceJson(){
 
         given().
                 queryParam("key", prop.getProperty("KEY")).
@@ -64,5 +66,41 @@ public class PostStepDefs {
                 then().assertThat().statusCode(200).and().contentType(ContentType.JSON).and().
                 body("status", equalTo("OK"));
 
+    }
+
+    @Given("^I create the google place in XML")
+    public void createThePlaceXml() throws IOException {
+
+        RestAssured.baseURI = prop.getProperty("HOST");
+
+        String postData = GenerateStringFromResource("src/XML/postData.xml");
+
+        Response resp = given().
+                queryParam("key", prop.getProperty("KEY")).
+                body(postData).
+                when().
+                post(resources.getXmlPostResourceCreate()).
+                then().assertThat().statusCode(200).and().contentType(ContentType.XML).and().
+                extract().response();
+
+        String bodyResponse = resp.asString();
+
+        System.out.println(bodyResponse);
+
+        /*JsonPath js = new JsonPath(bodyResponse);
+
+        placeId = js.get("place_id");
+
+        System.out.println(placeId);*/
+
+    }
+
+    @When("^I delete the google place in XML")
+    public void deleteThePlaceXml() {
+
+    }
+
+    public static String GenerateStringFromResource(String path) throws IOException{
+        return new String(Files.readAllBytes(Paths.get(path)));
     }
 }
