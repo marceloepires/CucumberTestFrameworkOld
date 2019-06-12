@@ -34,10 +34,16 @@ public class payLoad {
                 "}";
     }
 
-    public static String getPostDeleteGooglePlaceData(String placeId){
+    public static String getJsonPostDeleteGooglePlaceData(String placeId){
         return "{\n" +
                 "  \"place_id\": \""+ placeId +"\"\n" +
                 "}";
+    }
+    
+    public static String getXmlPostDeleteGooglePlaceData(String placeId){
+    	return "<PlaceDeleteRequest>\n" +
+    			"<place_id>" + placeId + "</place_id>\n" +
+    			"</PlaceDeleteRequest>";
     }
 
 

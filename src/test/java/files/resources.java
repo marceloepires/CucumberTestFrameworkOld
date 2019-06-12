@@ -12,4 +12,8 @@ public class resources {
     public static String getJsonPostResourceDelete(){
         return "/maps/api/place/delete/json";
     }
+    
+    public static String getXmlPostResourceDelete(){
+    	return "/maps/api/place/delete/xml";
+    }
 }

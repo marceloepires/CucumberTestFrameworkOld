@@ -1,14 +1,7 @@
 package stepdefinition;
 
-import cucumber.api.java.Before;
-import cucumber.api.java.en.Given;
-import cucumber.api.java.en.When;
-import files.payLoad;
-import files.resources;
-import io.restassured.RestAssured;
-import io.restassured.http.ContentType;
-import io.restassured.path.json.JsonPath;
-import io.restassured.response.Response;
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.equalTo;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -16,8 +9,17 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Properties;
 
-import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.equalTo;
+import cucumber.api.java.Before;
+import cucumber.api.java.en.Given;
+import cucumber.api.java.en.When;
+import files.ExtractPlaceId;
+import files.payLoad;
+import files.resources;
+import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
+import io.restassured.path.json.JsonPath;
+import io.restassured.path.xml.XmlPath;
+import io.restassured.response.Response;
 
 
 public class PostStepDefs {
@@ -60,7 +62,7 @@ public class PostStepDefs {
 
         given().
                 queryParam("key", prop.getProperty("KEY")).
-                body(payLoad.getPostDeleteGooglePlaceData(placeId)).
+                body(payLoad.getJsonPostDeleteGooglePlaceData(placeId)).
                 when().
                 post(resources.getJsonPostResourceDelete()).
                 then().assertThat().statusCode(200).and().contentType(ContentType.JSON).and().
@@ -83,21 +85,21 @@ public class PostStepDefs {
                 then().assertThat().statusCode(200).and().contentType(ContentType.XML).and().
                 extract().response();
 
-        String bodyResponse = resp.asString();
-
-        System.out.println(bodyResponse);
-
-        /*JsonPath js = new JsonPath(bodyResponse);
-
-        placeId = js.get("place_id");
-
-        System.out.println(placeId);*/
+        XmlPath x = ExtractPlaceId.extractPlaceIdXml(resp);
+        placeId = x.get("PlaceAddResponce.place_id");
+        System.out.println(placeId);
 
     }
 
     @When("^I delete the google place in XML")
     public void deleteThePlaceXml() {
 
+    	given().
+	        queryParam("key", prop.getProperty("KEY")).
+	        body(payLoad.getXmlPostDeleteGooglePlaceData(placeId)).
+	        when().
+	        post(resources.getXmlPostResourceDelete()).
+	        then().assertThat().statusCode(200).and().contentType(ContentType.XML);
     }
 
     public static String GenerateStringFromResource(String path) throws IOException{

@@ -9,7 +9,7 @@ import org.junit.runner.RunWith;
         features = "src/feature",
         glue = {"stepdefinition"},
         format = {"pretty", "html:target/cucumber"},
-        tags = {"@wip"}
+        tags = {"@InScope"}
 )
 public class TestRun {
 
